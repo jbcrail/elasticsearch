@@ -156,7 +156,6 @@ public class TransportGetStackTracesAction extends HandledTransportAction<GetSta
         long start = System.nanoTime();
         GetStackTracesResponseBuilder responseBuilder = new GetStackTracesResponseBuilder();
         int exp = eventsIndex.getExponent();
-        responseBuilder.setSampleRate(eventsIndex.getSampleRate());
         client.prepareSearch(eventsIndex.getName())
             .setTrackTotalHits(false)
             .setSize(0)
@@ -182,6 +181,7 @@ public class TransportGetStackTracesAction extends HandledTransportAction<GetSta
                 Sum totalCountAgg = searchResponse.getAggregations().get("total_count");
                 long totalCount = Math.round(totalCountAgg.value());
                 Resampler resampler = new Resampler(request, eventsIndex.getSampleRate(), totalCount);
+                responseBuilder.setSampleRate(resampler.getAdjustedSampleRate());
                 StringTerms stacktraces = searchResponse.getAggregations().get("group_by");
                 // sort items lexicographically to access Lucene's term dictionary more efficiently when issuing an mget request.
                 // The term dictionary is lexicographically sorted and using the same order reduces the number of page faults

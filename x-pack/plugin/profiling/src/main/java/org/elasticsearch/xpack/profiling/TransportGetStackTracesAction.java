@@ -416,12 +416,12 @@ public class TransportGetStackTracesAction extends HandledTransportAction<GetSta
                     // Adjust the sample counts from down-sampled to fully sampled.
                     // Be aware that downsampling drops entries from stackTraceEvents, so that
                     // the sum of the upscaled count values is less that totalCount.
-                    return (int) Math.floor(newCount / (sampleRate * p));
+                    return (int) Math.floor(newCount / adjustedSampleRate);
                 } else {
                     return 0;
                 }
             } else {
-                return originalCount;
+                return (int) Math.floor(originalCount / adjustedSampleRate);
             }
         }
     }

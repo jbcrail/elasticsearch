@@ -381,6 +381,8 @@ public class TransportGetStackTracesAction extends HandledTransportAction<GetSta
 
         private final double p;
 
+        private final double adjustedSampleRate;
+
         Resampler(GetStackTracesRequest request, double sampleRate, long totalCount) {
             // Manually reduce sample count if totalCount exceeds sampleSize by 10%.
             if (totalCount > request.getSampleSize() * 1.1) {
@@ -395,6 +397,11 @@ public class TransportGetStackTracesAction extends HandledTransportAction<GetSta
                 this.sampleRate = sampleRate;
                 this.p = 1.0d;
             }
+            this.adjustedSampleRate = sampleRate * p;
+        }
+
+        public double getAdjustedSampleRate() {
+            return adjustedSampleRate;
         }
 
         public int adjustSampleCount(int originalCount) {
